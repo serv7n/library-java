@@ -97,6 +97,14 @@ class LivroRepositoryTest {
         List<Livro> livros = livroRepository.findByTituloContaining("Harry ");
         livros.forEach(System.out::println);
     }
+
+    @Test
+    public  void listarTodosViaQuery(){
+        livroRepository.findAllLivrosMetodh();
+
+    }
+
+
 }
 
 

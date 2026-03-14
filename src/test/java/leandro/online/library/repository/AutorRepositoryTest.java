@@ -1,6 +1,8 @@
 package leandro.online.library.repository;
 
+import leandro.online.library.dto.AutorRequestDTO;
 import leandro.online.library.model.Autor;
+import leandro.online.library.service.AutorService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,7 +17,9 @@ import java.util.UUID;
 public class AutorRepositoryTest {
     @Autowired
     private AutorRepository autorRepository;
+    AutorRepositoryTest(){
 
+    }
     @Test
     public void salvar(){
         Autor autor = new Autor();
@@ -63,5 +67,12 @@ public class AutorRepositoryTest {
             autorRepository.delete(autor);
 
          }
+    }
+
+    @Test
+    public void test(AutorService autorService){
+       AutorRequestDTO autorRequestDTO = new AutorRequestDTO("leandro", LocalDate.now(), "brasileiro");
+//       autorDTO.mappear();
+       System.out.println();
     }
 }
