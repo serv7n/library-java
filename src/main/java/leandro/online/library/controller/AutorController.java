@@ -33,20 +33,20 @@ public class AutorController {
             @RequestParam(value = "name", required = false) String name,
             @RequestParam(value = "nacionalidade", required = false)    String nacionalidade
             ){
-        List<Autor> autores = List.of();
-        if(name != null && nacionalidade != null){
-                 autores = autorService.getAllAutorContainsNameAndNacionalidade(name,nacionalidade);
-
-        }else if (name != null) {
-               autores = autorService.getAllAutorContainsName(name);
-
-        }else if (nacionalidade != null) {
-                 autores = autorService.getAllAutorNacionalidade(nacionalidade);
-
-        }else {
-                 autores = autorService.getAllAutor();
-        }
-
+//        List<Autor> autores = List.of();
+//        if(name != null && nacionalidade != null){
+//                 autores = autorService.getAllAutorContainsNameAndNacionalidade(name,nacionalidade);
+//
+//        }else if (name != null) {
+//               autores = autorService.getAllAutorContainsName(name);
+//
+//        }else if (nacionalidade != null) {
+//                 autores = autorService.getAllAutorNacionalidade(nacionalidade);
+//
+//        }else {
+//                 autores = autorService.getAllAutor();
+//        }
+        List<Autor> autores = autorService.findByExemple(name,nacionalidade);
         List<AutorResponseDTO> autoresDTO = autorService.mapperListDTO(autores);
         return ResponseEntity.ok(autoresDTO);
 

@@ -9,6 +9,8 @@ import leandro.online.library.repository.AutorRepository;
 import leandro.online.library.repository.LivroRepository;
 import leandro.online.library.validator.AutorValidator;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -81,5 +83,12 @@ public class AutorService {
     public boolean existLivro(Autor autor) {
         return  livroRepository.existsLivroByAutor(autor);
     }
-
+    public List<Autor> findByExemple(String nome, String nacionalidade){
+        Autor autor =  new Autor();
+        autor.setName(nome);
+        autor.setNacionalidade(nacionalidade);
+        ExampleMatcher exemple = ExampleMatcher.matching().withIgnoreCase().withIgnoreNullValues().withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
+        Example<Autor> autorExample = Example.of(autor, exemple);
+        return autorRepository.findAll(autorExample);
+    }
 }
