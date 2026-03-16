@@ -9,7 +9,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.text.html.Option;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface LivroRepository extends JpaRepository<Livro, UUID> {
@@ -32,4 +34,7 @@ public interface LivroRepository extends JpaRepository<Livro, UUID> {
 
 
     boolean existsLivroByAutor(Autor autor);
+
+
+    Optional<Livro> findLivroByIsbn(String isbn);
 }

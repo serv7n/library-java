@@ -1,21 +1,18 @@
 package leandro.online.library.controller;
 
 import jakarta.validation.Valid;
-import jakarta.websocket.server.PathParam;
 import leandro.online.library.dto.AutorRequestDTO;
 import leandro.online.library.dto.AutorResponseDTO;
 import leandro.online.library.dto.ErroMensageDTO;
-import leandro.online.library.exception.OperacaoNaoPermitida;
+import leandro.online.library.exception.OperacaoNaoPermitidaException;
 import leandro.online.library.model.Autor;
 import leandro.online.library.service.AutorService;
-import org.springframework.boot.jackson.autoconfigure.JacksonProperties;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.ArrayList;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -33,19 +30,6 @@ public class AutorController {
             @RequestParam(value = "name", required = false) String name,
             @RequestParam(value = "nacionalidade", required = false)    String nacionalidade
             ){
-//        List<Autor> autores = List.of();
-//        if(name != null && nacionalidade != null){
-//                 autores = autorService.getAllAutorContainsNameAndNacionalidade(name,nacionalidade);
-//
-//        }else if (name != null) {
-//               autores = autorService.getAllAutorContainsName(name);
-//
-//        }else if (nacionalidade != null) {
-//                 autores = autorService.getAllAutorNacionalidade(nacionalidade);
-//
-//        }else {
-//                 autores = autorService.getAllAutor();
-//        }
         List<Autor> autores = autorService.findByExemple(name,nacionalidade);
         List<AutorResponseDTO> autoresDTO = autorService.mapperListDTO(autores);
         return ResponseEntity.ok(autoresDTO);
@@ -79,7 +63,6 @@ public class AutorController {
         }
         Autor autor = autorOptional.get();
         AutorResponseDTO autorDTO = new AutorResponseDTO(
-                autor.getId(),
                 autor.getName(),
                 autor.getDataNascimento(),
                 autor.getNacionalidade());
@@ -95,7 +78,7 @@ public class AutorController {
         }
         try {
             autorService.deleteAutor(autor.get());
-        } catch (OperacaoNaoPermitida e) {
+        } catch (OperacaoNaoPermitidaException e) {
             ErroMensageDTO err = ErroMensageDTO.badRequest("Erro na exclusão: registro está sendo utilizado.");
             return ResponseEntity.status(err.status()).body(err);
         }

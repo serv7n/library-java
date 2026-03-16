@@ -2,8 +2,7 @@ package leandro.online.library.service;
 
 import leandro.online.library.dto.AutorRequestDTO;
 import leandro.online.library.dto.AutorResponseDTO;
-import leandro.online.library.dto.ErroMensageDTO;
-import leandro.online.library.exception.OperacaoNaoPermitida;
+import leandro.online.library.exception.OperacaoNaoPermitidaException;
 import leandro.online.library.model.Autor;
 import leandro.online.library.repository.AutorRepository;
 import leandro.online.library.repository.LivroRepository;
@@ -11,7 +10,6 @@ import leandro.online.library.validator.AutorValidator;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,12 +23,10 @@ public class AutorService {
     private final AutorValidator validator;
     private final LivroRepository livroRepository;
 
-
     public void salvar(Autor autor) {
         validator.validar(autor);
         this.autorRepository.save(autor);
     }
-
 
     public Optional<Autor> findById(UUID id) {
         return autorRepository.findById(id);
@@ -42,9 +38,7 @@ public class AutorService {
 
     public void deleteAutor(Autor autor) {
         if(existLivro(autor)){
-
-                    throw  new OperacaoNaoPermitida("Erro na exclusão: registro está sendo utilizado.");
-
+            throw  new OperacaoNaoPermitidaException("Erro na exclusão: registro está sendo utilizado.");
         };
         autorRepository.delete(autor);
     }
@@ -65,7 +59,6 @@ public class AutorService {
 
     public List<AutorResponseDTO> mapperListDTO(List<Autor> autores){
         List<AutorResponseDTO> autoresDTO = autores.stream().map(autor -> new AutorResponseDTO(
-                autor.getId(),
                 autor.getName(),
                 autor.getDataNascimento(),
                 autor.getNacionalidade())).toList();

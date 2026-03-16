@@ -57,4 +57,11 @@ public class Livro {
         this.preco = preco;
         this.autor = autor;
     }
+    public Livro(String isbn, String titulo, LocalDate dataPublicacao, generoLivro genero, BigDecimal preco) {
+        this.isbn = isbn;
+        this.titulo = titulo;
+        this.dataPublicacao = dataPublicacao;
+        this.genero = genero;
+        this.preco = preco;
+    }
 }

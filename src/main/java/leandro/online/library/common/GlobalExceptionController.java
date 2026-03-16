@@ -1,14 +1,14 @@
 package leandro.online.library.common;
 
-import leandro.online.library.dto.AutorResponseDTO;
 import leandro.online.library.dto.ErroMensageDTO;
 import leandro.online.library.dto.ErrorCampo;
+import leandro.online.library.exception.GeneroInvalidoException;
+import leandro.online.library.exception.IsbnDuplicadoException;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.List;
@@ -25,5 +25,19 @@ public class GlobalExceptionController {
                 .toList();
         return new
                 ErroMensageDTO(HttpStatus.UNPROCESSABLE_CONTENT.value(), "Erro validacao",errors);
+    }
+    @ExceptionHandler(GeneroInvalidoException.class)
+    @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
+    public ErroMensageDTO handlerGeneroInvalidoException(GeneroInvalidoException e){
+        String meesege = e.getMessage();
+        return new ErroMensageDTO(HttpStatus.NOT_ACCEPTABLE.value(), meesege,List.of());
+    }
+
+
+    @ExceptionHandler(IsbnDuplicadoException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErroMensageDTO handlerIsbnDuplicadoException(IsbnDuplicadoException e){
+        String meesege = e.getMessage();
+        return new ErroMensageDTO(HttpStatus.CONFLICT.value(), meesege,List.of());
     }
 }
