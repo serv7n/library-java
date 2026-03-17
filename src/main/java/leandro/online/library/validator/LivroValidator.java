@@ -15,18 +15,21 @@ import java.util.Optional;
 @AllArgsConstructor
 public class LivroValidator {
     private final LivroRepository livroRepository;
-    public void validarLivro(LivroResquestDTO LivroDTO){
+    public boolean validarLivro(LivroResquestDTO LivroDTO){
         try {
             generoLivro.valueOf(LivroDTO.genero());
+            return true;
         } catch (IllegalArgumentException e) {
-              throw  new  GeneroInvalidoException("Genero Invalido");
+            return false;
         }
+
+
     }
     public boolean existeIsbnDuplicado(Livro livro){
         Optional<Livro> livroOp = livroRepository.findLivroByIsbn(livro.getIsbn());
         if(livroOp.isEmpty()) return false;
         if(livro.getId() == null) return true;
         return !livro.getId().equals(livroOp.get().getId());
-
     }
+
 }

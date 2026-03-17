@@ -8,4 +8,5 @@ public record AutorResponseDTO(
         LocalDate dataNascimento,
         String nacionalidade
 ) {
+
 }

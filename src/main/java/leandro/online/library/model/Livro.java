@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -17,10 +18,13 @@ import java.util.UUID;
 @Setter
 
 @NoArgsConstructor
+
+@EntityListeners(AuditingEntityListener.class)
 public class Livro {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     UUID id;
+    @Column(unique = true)
     String isbn;
     String titulo;
 
@@ -32,6 +36,9 @@ public class Livro {
 
     BigDecimal preco;
 
+
+    @Column(name = "id_usuario")
+    private UUID idUsuario;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_autor")
     private Autor autor;

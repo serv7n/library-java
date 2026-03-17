@@ -7,6 +7,7 @@ import jakarta.validation.constraints.*;
 import leandro.online.library.Enum.generoLivro;
 import leandro.online.library.model.Autor;
 import leandro.online.library.model.Livro;
+import org.hibernate.validator.constraints.ISBN;
 import org.springframework.format.annotation.NumberFormat;
 import org.springframework.http.HttpStatusCode;
 
@@ -15,8 +16,9 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 public record LivroResquestDTO(
+        @ISBN
         @NotBlank(message = "Campo Obrigatorio")
-        @Size(max = 8,min = 8, message = "deve conter 8 caracter")
+
         String isbn,
         @NotBlank(message = "Campo Obrigatorio")
         @Size(max = 255, message = "deve ter no maximo 255 caracter")

@@ -18,7 +18,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("livro")
+@RequestMapping("livros")
 
 public class LivroController {
     private final LivroService livroService;
@@ -55,7 +55,24 @@ public class LivroController {
 
         return ResponseEntity.ok(livroDTO);
     }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> excluir(@PathVariable UUID id){
+        if(livroService.excluir(id)){
+            return  ResponseEntity.status(204).build();
+        }
+        return ResponseEntity.notFound().build();
 
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> atualizar(
+            @RequestBody @Valid LivroResquestDTO livroDTO,
+            @PathVariable UUID id){
+            Optional<Livro> livro =  livroService.mostraLivro(id);
+            if(livro.isEmpty()) return ResponseEntity.notFound().build();
+            livroService.atualizarLivro(livroDTO, livro.get());
+            return  ResponseEntity.status(204).build();
+    }
 
 
 }
