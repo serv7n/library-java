@@ -12,10 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 public abstract  class LivroMapper {
     @Autowired
     AutorRepository autorRepository;
-    @Autowired
-    AutorMapper autorMapper;
-
-    @Mapping(target = "autor", expression = "java(autorRepository.findById(livroDTO.id_autor()).orElse(null))")
     public  abstract Livro toLivro(LivroResquestDTO livroDTO);
 
     public  abstract LivroResponseDTO toDTO(Livro livro);

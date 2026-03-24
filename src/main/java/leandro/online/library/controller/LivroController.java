@@ -27,7 +27,9 @@ public class LivroController implements GenericController {
     }
     @PostMapping
     public ResponseEntity<Void> salva(@RequestBody @Valid LivroResquestDTO livroDTO){
-        Livro livro = livroService.salva(livroDTO);
+        livroService.validarGeneroInvalido(livroDTO);
+        Livro livro = livroMapper.toLivro(livroDTO);
+        livroService.salva(livro);
         URI url = createHeaderLocation(livro.getId());
         return   ResponseEntity.created(url).build();
     }

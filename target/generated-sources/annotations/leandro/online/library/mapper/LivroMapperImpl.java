@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2026-03-24T10:16:55-0300",
+    date = "2026-03-24T11:05:28-0300",
     comments = "version: 1.6.3, compiler: javac, environment: Java 21.0.10 (Ubuntu)"
 )
 @Component
@@ -38,8 +38,6 @@ public class LivroMapperImpl extends LivroMapper {
             livro.setGenero( Enum.valueOf( generoLivro.class, livroDTO.genero() ) );
         }
         livro.setPreco( livroDTO.preco() );
-
-        livro.setAutor( autorRepository.findById(livroDTO.id_autor()).orElse(null) );
 
         return livro;
     }

@@ -35,25 +35,15 @@ public class LivroService {
     private final LivroValidator validator;
     private final LivroMapper livroMapper;
     private  final AutorMapper autorMapper;
-
-    public Livro salva(LivroResquestDTO LivroDTO) {
-
-        if (!validator.validarLivro(LivroDTO)) throw new GeneroInvalidoException("Genero Invalido");
-
-        Livro livro = livroMapper.toLivro(LivroDTO);
-
+    public void validarGeneroInvalido(LivroResquestDTO livroDTO){
+        if (!validator.validarLivro(livroDTO)) throw new GeneroInvalidoException("Genero Invalido");
+    }
+    public  void validarIsbnDuplicado(Livro livro){
         if (validator.existeIsbnDuplicado(livro)) throw new IsbnDuplicadoException("Isbn Duplicado");
-
-        if (LivroDTO.id_autor() != null) {
-            Optional<Autor> autor = autorRepository.findById(LivroDTO.id_autor());
-            autor.ifPresent(livro::setAutor);
-        }
-
+    }
+    public void salva(Livro livro) {
+        validarIsbnDuplicado(livro);
         livroRepository.save(livro);
-
-
-
-        return livro;
     }
 
     public Optional<Livro> obterPorLivro(UUID id) {
