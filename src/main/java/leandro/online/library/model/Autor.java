@@ -1,10 +1,8 @@
 package leandro.online.library.model;
 
 import jakarta.persistence.*;
-import jakarta.persistence.criteria.Fetch;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -26,8 +24,8 @@ public class Autor {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "name", length = 100,nullable = false)
-    private String name;
+    @Column(name = "nome", length = 100,nullable = false)
+    private String nome;
 
     @Column(name = "data_nascimento",nullable = false)
     private LocalDate dataNascimento;
@@ -54,7 +52,7 @@ public class Autor {
     public String toString() {
         return "Autor{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
+                ", name='" + nome + '\'' +
                 ", dataNascimento=" + dataNascimento +
                 ", nacionalidade='" + nacionalidade + '\''+
                 ",livros {"+ livros+ "}";

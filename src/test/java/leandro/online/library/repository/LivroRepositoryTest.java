@@ -1,6 +1,5 @@
 package leandro.online.library.repository;
 
-import jakarta.persistence.*;
 import leandro.online.library.Enum.generoLivro;
 import leandro.online.library.model.Autor;
 import leandro.online.library.model.Livro;
@@ -15,9 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
 
 @SpringBootTest
 class LivroRepositoryTest {
@@ -78,7 +74,7 @@ class LivroRepositoryTest {
     @Test
     public void salvarVarios(){
         Autor autor = new Autor();
-        autor.setName("Harry");
+        autor.setNome("Harry");
         autor.setNacionalidade("Estadonidense`");
         autor.setDataNascimento(LocalDate.of(2002,3,15));
         autorRepository.save(autor);

@@ -1,76 +1,51 @@
 package leandro.online.library.controller;
 
 import jakarta.validation.Valid;
-import jakarta.websocket.server.PathParam;
-import leandro.online.library.dto.AutorResponseDTO;
 import leandro.online.library.dto.LivroResponseDTO;
 import leandro.online.library.dto.LivroResquestDTO;
-import leandro.online.library.model.Autor;
+import leandro.online.library.mapper.LivroMapper;
 import leandro.online.library.model.Livro;
 import leandro.online.library.service.LivroService;
-import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.Optional;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("livros")
 
-public class LivroController {
+public class LivroController implements GenericController {
     private final LivroService livroService;
-    public LivroController(LivroService livroService)
+    private final LivroMapper livroMapper;
+
+    public LivroController(LivroService livroService, LivroMapper livroMapper)
     {
         this.livroService = livroService;
+        this.livroMapper = livroMapper;
     }
     @PostMapping
     public ResponseEntity<Void> salva(@RequestBody @Valid LivroResquestDTO livroDTO){
-        URI url = livroService.salva(livroDTO);
+        Livro livro  = livroService.salva(livroDTO);
+        URI url = createHeaderLocation(livro.getId());
         return   ResponseEntity.created(url).build();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> mostrar(@PathVariable UUID id) {
-        Optional<Livro> livroOptianal = livroService.mostraLivro(id);
-        if (livroOptianal.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        Livro livro = livroOptianal.get();
-        Autor autor = livro.getAutor();
-        AutorResponseDTO autorDTO = null;
-        if (autor != null) {
-            autorDTO = new AutorResponseDTO(autor.getName(), autor.getDataNascimento(), autor.getNacionalidade());
-        }
-        LivroResponseDTO livroDTO = new LivroResponseDTO(livro.getId(),
-                livro.getIsbn(),
-                livro.getTitulo(),
-                livro.getDataPublicacao(),
-                livro.getGenero().toString(),
-                livro.getPreco(),
-                autorDTO
-        );
-
-        return ResponseEntity.ok(livroDTO);
+    public ResponseEntity<LivroResponseDTO> mostrar(@PathVariable UUID id) {
+        return ResponseEntity.ok(livroMapper.toDTO(livroService.obterPorId(id)));
     }
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> excluir(@PathVariable UUID id){
-        if(livroService.excluir(id)){
-            return  ResponseEntity.status(204).build();
-        }
-        return ResponseEntity.notFound().build();
-
+    public ResponseEntity<Void> excluir(@PathVariable UUID id) {
+        livroService.excluir(id);
+        return ResponseEntity.status(204).build();
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Void> atualizar(
             @RequestBody @Valid LivroResquestDTO livroDTO,
             @PathVariable UUID id){
-            Optional<Livro> livro =  livroService.mostraLivro(id);
-            if(livro.isEmpty()) return ResponseEntity.notFound().build();
-            livroService.atualizarLivro(livroDTO, livro.get());
+            livroService.atualizarLivro(livroDTO, id);
             return  ResponseEntity.status(204).build();
     }
 
