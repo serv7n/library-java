@@ -10,6 +10,7 @@ import leandro.online.library.repository.AutorRepository;
 import leandro.online.library.repository.LivroRepository;
 import leandro.online.library.validator.AutorValidator;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
@@ -19,12 +20,19 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-@AllArgsConstructor
+
 public class AutorService {
     private final AutorRepository autorRepository;
     private final AutorValidator validator;
     private final LivroRepository livroRepository;
     private final AutorMapper autorMapper;
+
+    public AutorService(AutorRepository autorRepository, AutorValidator validator, LivroRepository livroRepository, AutorMapper autorMapper) {
+        this.autorRepository = autorRepository;
+        this.validator = validator;
+        this.livroRepository = livroRepository;
+        this.autorMapper = autorMapper;
+    }
 
     public void salvar(Autor autor) {
         if(validator.existeAutorDuplicado(autor)) {
@@ -50,16 +58,6 @@ public class AutorService {
 
     public List<Autor> getAllAutor() {
         return autorRepository.findAll();
-    }
-
-    public List<Autor> getAllAutorContainsName(String name) {
-        return autorRepository.findAutorByNameContaining(name);
-    }
-    public List<Autor> getAllAutorNacionalidade(String nacionalidade) {
-        return autorRepository.findAutorByNacionalidade(nacionalidade);
-    }
-    public List<Autor> getAllAutorContainsNameAndNacionalidade(String name, String nacionalidade) {
-        return autorRepository.findAutorsByNameContainingAndNacionalidade(name, nacionalidade);
     }
 
     public List<AutorResponseDTO> mapperListDTO(List<Autor> autores){

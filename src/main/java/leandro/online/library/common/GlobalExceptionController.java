@@ -2,7 +2,7 @@ package leandro.online.library.common;
 
 import leandro.online.library.dto.ErroMensageDTO;
 import leandro.online.library.dto.ErrorCampo;
-import leandro.online.library.exception.AutorDuplicadoException;
+
 import leandro.online.library.exception.GeneroInvalidoException;
 import leandro.online.library.exception.IsbnDuplicadoException;
 import leandro.online.library.exception.OperacaoNaoPermitidaException;

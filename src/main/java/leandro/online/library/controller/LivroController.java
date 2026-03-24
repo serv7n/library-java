@@ -53,7 +53,7 @@ public class LivroController implements GenericController {
     public ResponseEntity<Void> atualizar(
             @RequestBody @Valid LivroResquestDTO livroDTO,
             @PathVariable UUID id){
-            Optional<Livro> livro =  livroService.mostraLivro(id);
+            Optional<Livro> livro =  livroService.obterPorLivro(id);
             if(livro.isEmpty()) return ResponseEntity.notFound().build();
             livroService.atualizarLivro(livroDTO, livro.get());
             return  ResponseEntity.status(204).build();

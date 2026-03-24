@@ -2,6 +2,7 @@
 /home/l/Documentos/JAVA/library-java/src/main/java/leandro/online/library/LibraryApplication.java
 /home/l/Documentos/JAVA/library-java/src/main/java/leandro/online/library/common/GlobalExceptionController.java
 /home/l/Documentos/JAVA/library-java/src/main/java/leandro/online/library/controller/AutorController.java
+/home/l/Documentos/JAVA/library-java/src/main/java/leandro/online/library/controller/GenericController.java
 /home/l/Documentos/JAVA/library-java/src/main/java/leandro/online/library/controller/LivroController.java
 /home/l/Documentos/JAVA/library-java/src/main/java/leandro/online/library/dto/AutorRequestDTO.java
 /home/l/Documentos/JAVA/library-java/src/main/java/leandro/online/library/dto/AutorResponseDTO.java

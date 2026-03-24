@@ -1,5 +1,6 @@
 leandro/online/library/dto/AutorResponseDTO.class
 leandro/online/library/dto/LivroResponseDTO.class
+leandro/online/library/controller/GenericController.class
 leandro/online/library/exception/RegistroDuplicadoException.class
 leandro/online/library/repository/AutorRepository.class
 leandro/online/library/controller/AutorController.class

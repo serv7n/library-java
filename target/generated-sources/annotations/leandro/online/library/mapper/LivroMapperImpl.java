@@ -9,15 +9,19 @@ import leandro.online.library.dto.AutorResponseDTO;
 import leandro.online.library.dto.LivroResponseDTO;
 import leandro.online.library.dto.LivroResquestDTO;
 import leandro.online.library.model.Livro;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2026-03-20T11:04:30-0300",
+    date = "2026-03-24T10:16:55-0300",
     comments = "version: 1.6.3, compiler: javac, environment: Java 21.0.10 (Ubuntu)"
 )
 @Component
 public class LivroMapperImpl extends LivroMapper {
+
+    @Autowired
+    private AutorMapper autorMapper;
 
     @Override
     public Livro toLivro(LivroResquestDTO livroDTO) {
@@ -52,6 +56,7 @@ public class LivroMapperImpl extends LivroMapper {
         LocalDate dataPublicacao = null;
         String genero = null;
         BigDecimal preco = null;
+        AutorResponseDTO autor = null;
 
         id = livro.getId();
         isbn = livro.getIsbn();
@@ -61,8 +66,7 @@ public class LivroMapperImpl extends LivroMapper {
             genero = livro.getGenero().name();
         }
         preco = livro.getPreco();
-
-        AutorResponseDTO autor = livro.getAutor() != null ? autorMapper.toResponseDTO(livro.getAutor()) : null;
+        autor = autorMapper.toResponseDTO( livro.getAutor() );
 
         LivroResponseDTO livroResponseDTO = new LivroResponseDTO( id, isbn, titulo, dataPublicacao, genero, preco, autor );
 

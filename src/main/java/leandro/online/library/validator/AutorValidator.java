@@ -16,7 +16,7 @@ public class AutorValidator {
     public boolean existeAutorDuplicado(Autor autor){
 
         Optional<Autor> encontrado = autorRepository
-                .findAutorByNameAndDataNascimentoAndNacionalidade(
+                .findAutorByNomeAndDataNascimentoAndNacionalidade(
                         autor.getNome(),
                         autor.getDataNascimento(),
                         autor.getNacionalidade()
