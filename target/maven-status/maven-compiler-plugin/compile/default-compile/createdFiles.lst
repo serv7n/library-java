@@ -21,6 +21,7 @@ leandro/online/library/dto/LivroResquestDTO.class
 leandro/online/library/mapper/AutorMapperImpl.class
 leandro/online/library/Enum/generoLivro.class
 leandro/online/library/validator/AutorValidator.class
+leandro/online/library/exception/EntidadeNaoEncontradaException.class
 leandro/online/library/mapper/LivroMapperImpl.class
 leandro/online/library/model/Livro.class
 leandro/online/library/LibraryApplication.class

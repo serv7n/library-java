@@ -10,6 +10,7 @@
 /home/l/Documentos/JAVA/library-java/src/main/java/leandro/online/library/dto/ErrorCampo.java
 /home/l/Documentos/JAVA/library-java/src/main/java/leandro/online/library/dto/LivroResponseDTO.java
 /home/l/Documentos/JAVA/library-java/src/main/java/leandro/online/library/dto/LivroResquestDTO.java
+/home/l/Documentos/JAVA/library-java/src/main/java/leandro/online/library/exception/EntidadeNaoEncontradaException.java
 /home/l/Documentos/JAVA/library-java/src/main/java/leandro/online/library/exception/GeneroInvalidoException.java
 /home/l/Documentos/JAVA/library-java/src/main/java/leandro/online/library/exception/IsbnDuplicadoException.java
 /home/l/Documentos/JAVA/library-java/src/main/java/leandro/online/library/exception/OperacaoNaoPermitidaException.java
