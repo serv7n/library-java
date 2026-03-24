@@ -14,6 +14,7 @@ import leandro.online.library.validator.LivroValidator;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,9 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
+import static  leandro.online.library.repository.specs.LivroSpecs.*;
+
+
 
 @Service
 @AllArgsConstructor
@@ -71,31 +75,19 @@ public class LivroService {
         validator.existeIsbnDuplicado(livro);
     }
 
-    public List<LivroResponseDTO> pesquisa(
+    public  List<LivroResponseDTO> pesquisa(
+
             String isbn,
             String titulo,
             LocalDate dataPublicacao,
-            generoLivro genero,
+            String genero,
             BigDecimal preco,
             String nomeAutor) {
-
-        Livro livro = new Livro(isbn, titulo, dataPublicacao, genero, preco);
-        Autor autor = null;
-        if (nomeAutor != null) {
-            autor = new Autor();
-            autor.setNome(nomeAutor);
-            livro.setAutor(autor);
-        }
-        ExampleMatcher example = ExampleMatcher
-                .matching()
-                .withIgnoreCase()
-                .withIgnoreNullValues()
-                .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
-
-        Example<Livro> livroExample = Example.of(livro, example);
-
-        List<Livro> livros = livroRepository.findAll(livroExample);
-
+        Specification<Livro> specs = ((root, query, cb) -> cb.conjunction());
+        if(isbn != null) specs = specs.and(isbnEqual(isbn));
+        if(titulo != null) specs = specs.and(tituloLike(titulo));
+        if(genero != null) specs = specs.and(generoEqual(genero));
+        List<Livro> livros = livroRepository.findAll(specs);
         return livros.stream().map(livroMapper::toDTO).toList();
     }
 

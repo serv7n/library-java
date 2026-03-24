@@ -9,7 +9,10 @@ import leandro.online.library.service.LivroService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.net.URI;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -48,6 +51,21 @@ public class LivroController implements GenericController {
             livroService.atualizarLivro(livroDTO, id);
             return  ResponseEntity.status(204).build();
     }
-
+    @GetMapping
+    public ResponseEntity<List<LivroResponseDTO>> pesquisar(
+            @RequestParam(name = "isbn", required = false)
+            String isbn,
+            @RequestParam(name = "titulo", required = false)
+            String titulo,
+            @RequestParam(name = "data-publicacao", required = false)
+            LocalDate dataPublicacao,
+            @RequestParam(name = "genero", required = false)
+            String genero,
+            @RequestParam(name = "preco", required = false)
+            BigDecimal preco,
+            @RequestParam(name = "nome-autor", required = false)
+            String nomeAutor){
+       return ResponseEntity.ok(livroService.pesquisa(isbn, titulo, dataPublicacao, genero, preco, nomeAutor));
+    }
 
 }

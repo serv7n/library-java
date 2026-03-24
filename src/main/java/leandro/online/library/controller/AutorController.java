@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -40,14 +39,11 @@ public class AutorController implements GenericController {
     public ResponseEntity<AutorResponseDTO> mostra(@PathVariable UUID id){
         return  ResponseEntity.ok(autorMapper.toResponseDTO(autorService.obterPorId(id)));
     }
-
-
     @DeleteMapping("/{id}")
     public ResponseEntity deletar(@PathVariable UUID id){
         autorService.deleteAutor(id);
         return ResponseEntity.status(204).build();
     }
-
     @PutMapping("/{id}")
     public ResponseEntity<Object> atualizar(@PathVariable UUID id, @RequestBody AutorRequestDTO autorRequestDTO){
         autorService.atualizar(id,autorRequestDTO);

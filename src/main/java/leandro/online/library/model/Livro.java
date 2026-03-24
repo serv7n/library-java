@@ -36,7 +36,6 @@ public class Livro {
 
     BigDecimal preco;
 
-
     @Column(name = "id_usuario")
     private UUID idUsuario;
     @ManyToOne(fetch = FetchType.LAZY)

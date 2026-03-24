@@ -10,9 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @Mapper(componentModel = "spring", uses = AutorMapper.class)
 public abstract  class LivroMapper {
-    @Autowired
-    AutorRepository autorRepository;
     public  abstract Livro toLivro(LivroResquestDTO livroDTO);
-
     public  abstract LivroResponseDTO toDTO(Livro livro);
 }
