@@ -38,6 +38,7 @@ public class LivroService {
     @Transactional
     public Livro salva(LivroResquestDTO livrodto) {
         validator.validarGenero(livrodto);
+        validator.validarPrecoObrigatorioAPartirDe2020(livrodto.dataPublicacao(),livrodto.preco());
         Livro livro =  livroMapper.toLivro(livrodto);
         validator.existeIsbnDuplicado(livro);
         livroRepository.save(livro);
@@ -71,6 +72,7 @@ public class LivroService {
     public void atualizarLivro(LivroResquestDTO dto, UUID id) {
         Livro livro  = obterPorId(id);
         validator.validarGenero(dto);
+        validator.validarPrecoObrigatorioAPartirDe2020(dto.dataPublicacao(),dto.preco());
         atualizarEntidade(dto,livro);
         validator.existeIsbnDuplicado(livro);
     }
@@ -79,7 +81,7 @@ public class LivroService {
 
             String isbn,
             String titulo,
-            LocalDate dataPublicacao,
+            Integer ano,
             String genero,
             BigDecimal preco,
             String nomeAutor) {
@@ -87,6 +89,8 @@ public class LivroService {
         if(isbn != null) specs = specs.and(isbnEqual(isbn));
         if(titulo != null) specs = specs.and(tituloLike(titulo));
         if(genero != null) specs = specs.and(generoEqual(genero));
+        if(ano != null) specs = specs.and(anoPublicacaoEqual(ano));
+        if(nomeAutor != null) specs = specs.and(nomeAutorLike(nomeAutor));
         List<Livro> livros = livroRepository.findAll(specs);
         return livros.stream().map(livroMapper::toDTO).toList();
     }

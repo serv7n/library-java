@@ -58,14 +58,14 @@ public class LivroController implements GenericController {
             @RequestParam(name = "titulo", required = false)
             String titulo,
             @RequestParam(name = "data-publicacao", required = false)
-            LocalDate dataPublicacao,
+            Integer ano,
             @RequestParam(name = "genero", required = false)
             String genero,
             @RequestParam(name = "preco", required = false)
             BigDecimal preco,
             @RequestParam(name = "nome-autor", required = false)
             String nomeAutor){
-       return ResponseEntity.ok(livroService.pesquisa(isbn, titulo, dataPublicacao, genero, preco, nomeAutor));
+       return ResponseEntity.ok(livroService.pesquisa(isbn, titulo, ano, genero, preco, nomeAutor));
     }
 
 }
