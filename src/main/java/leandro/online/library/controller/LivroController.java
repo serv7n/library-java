@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -27,37 +26,26 @@ public class LivroController implements GenericController {
     }
     @PostMapping
     public ResponseEntity<Void> salva(@RequestBody @Valid LivroResquestDTO livroDTO){
-        livroService.validarGeneroInvalido(livroDTO);
-        Livro livro = livroMapper.toLivro(livroDTO);
-        livroService.salva(livro);
+        Livro livro  = livroService.salva(livroDTO);
         URI url = createHeaderLocation(livro.getId());
         return   ResponseEntity.created(url).build();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<LivroResponseDTO> mostrar(@PathVariable UUID id) {
-        return livroService.obterPorLivro(id).map(l ->{
-                var dto  = livroMapper.toDTO(l);
-                return ResponseEntity.ok(dto);
-                })
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        return ResponseEntity.ok(livroMapper.toDTO(livroService.obterPorId(id)));
     }
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> excluir(@PathVariable UUID id){
-        if(livroService.excluir(id)){
-            return  ResponseEntity.status(204).build();
-        }
-        return ResponseEntity.notFound().build();
-
+    public ResponseEntity<Void> excluir(@PathVariable UUID id) {
+        livroService.excluir(id);
+        return ResponseEntity.status(204).build();
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Void> atualizar(
             @RequestBody @Valid LivroResquestDTO livroDTO,
             @PathVariable UUID id){
-            Optional<Livro> livro =  livroService.obterPorLivro(id);
-            if(livro.isEmpty()) return ResponseEntity.notFound().build();
-            livroService.atualizarLivro(livroDTO, livro.get());
+            livroService.atualizarLivro(livroDTO, id);
             return  ResponseEntity.status(204).build();
     }
 
