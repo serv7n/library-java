@@ -12,16 +12,12 @@ import java.util.Optional;
 @AllArgsConstructor
 public class AutorValidator {
     final AutorRepository  autorRepository;
-    public void validar(Autor autor){
-        if(existeAutorDuplicado(autor)){
-            throw new RegistroDuplicadoException("Autor Duplicado");
-        }
-    }
-    private boolean existeAutorDuplicado(Autor autor){
+
+    public boolean existeAutorDuplicado(Autor autor){
 
         Optional<Autor> encontrado = autorRepository
                 .findAutorByNameAndDataNascimentoAndNacionalidade(
-                        autor.getName(),
+                        autor.getNome(),
                         autor.getDataNascimento(),
                         autor.getNacionalidade()
                 );

@@ -3,13 +3,13 @@ package leandro.online.library.controller;
 import jakarta.validation.Valid;
 import leandro.online.library.dto.AutorRequestDTO;
 import leandro.online.library.dto.AutorResponseDTO;
-import leandro.online.library.dto.ErroMensageDTO;
-import leandro.online.library.exception.OperacaoNaoPermitidaException;
+
+import leandro.online.library.mapper.AutorMapper;
 import leandro.online.library.model.Autor;
 import leandro.online.library.service.AutorService;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 
@@ -19,11 +19,10 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/autores")
-public class AutorController {
-    private AutorService autorService;
-    public AutorController(AutorService autorService){
-        this.autorService = autorService;
-    }
+@AllArgsConstructor
+public class AutorController implements GenericController {
+    private final AutorService autorService;
+    private final AutorMapper autorMapper;
 
     @GetMapping
     public ResponseEntity<List<AutorResponseDTO>> autor(
@@ -33,42 +32,25 @@ public class AutorController {
         List<Autor> autores = autorService.findByExemple(name,nacionalidade);
         List<AutorResponseDTO> autoresDTO = autorService.mapperListDTO(autores);
         return ResponseEntity.ok(autoresDTO);
-
     }
+
     @PostMapping
     public ResponseEntity<Object> salvar(@RequestBody @Valid AutorRequestDTO autor){
-        Autor autorMap = autor.mappear();
-        try {
-            autorService.salvar(autorMap);
-        } catch (RuntimeException e) {
-            ErroMensageDTO erro = ErroMensageDTO.conflict("Erro de Validação");
-            return ResponseEntity.status(erro.status()).body(erro);
-        }
-
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(autorMap.getId())
-                .toUri();
-
+        Autor autorMap = autorMapper.toEntity(autor);
+        autorService.salvar(autorMap);
+        URI location = createHeaderLocation(autorMap.getId());
         return ResponseEntity.created(location).build();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<AutorResponseDTO> mostra(@PathVariable String id){
-
-        Optional<Autor> autorOptional = autorService.findById(UUID.fromString(id));
-        if(autorOptional.isEmpty()){
-            return ResponseEntity.notFound().build();
-        }
-        Autor autor = autorOptional.get();
-        AutorResponseDTO autorDTO = new AutorResponseDTO(
-                autor.getName(),
-                autor.getDataNascimento(),
-                autor.getNacionalidade());
-
-        return ResponseEntity.ok(autorDTO);
+        UUID idv = UUID.fromString(id);
+        return  autorService.findById(idv).map( autor-> {
+           AutorResponseDTO autorDTO  = autorMapper.toResponseDTO(autor);
+           return ResponseEntity.ok(autorDTO);
+        }).orElseGet(()-> ResponseEntity.notFound().build());
     }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity deletar(@PathVariable String id){
@@ -76,13 +58,7 @@ public class AutorController {
         if(autor.isEmpty()){
             return  ResponseEntity.badRequest().build();
         }
-        try {
-            autorService.deleteAutor(autor.get());
-        } catch (OperacaoNaoPermitidaException e) {
-            ErroMensageDTO err = ErroMensageDTO.badRequest("Erro na exclusão: registro está sendo utilizado.");
-            return ResponseEntity.status(err.status()).body(err);
-        }
-
+        autorService.deleteAutor(autor.get());
         return ResponseEntity.status(204).build();
     }
 
@@ -92,14 +68,7 @@ public class AutorController {
         if(autorOptional.isEmpty()){
             return ResponseEntity.notFound().build();
         }
-        try {
-            autorService.atualizar(autorOptional.get(),autorRequestDTO);
-        } catch (RuntimeException e) {
-            ErroMensageDTO erro = ErroMensageDTO.conflict("Erro de Validação");
-            return ResponseEntity.status(erro.status()).body(erro);
-        }
-
+        autorService.atualizar(autorOptional.get(),autorRequestDTO);
         return  ResponseEntity.noContent().build();
     }
-
 }

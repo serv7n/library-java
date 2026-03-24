@@ -23,7 +23,7 @@ public class AutorRepositoryTest {
     @Test
     public void salvar(){
         Autor autor = new Autor();
-        autor.setName("Leandro");
+        autor.setNome("Leandro");
         autor.setNacionalidade("Brasileiro");
         autor.setDataNascimento(LocalDate.of(2007,7,23));
         var id = autorRepository.save(autor);
@@ -37,7 +37,7 @@ public class AutorRepositoryTest {
         if(possivelAutor.isPresent()){
             System.out.println(possivelAutor.get());
             Autor autor = possivelAutor.get();
-            autor.setName("laoro");
+            autor.setNome("laoro");
             autor.setNacionalidade("Arabe");
             autorRepository.save(autor);
         }

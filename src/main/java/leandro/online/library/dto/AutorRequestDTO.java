@@ -21,11 +21,4 @@ public record AutorRequestDTO(
         @Size(max = 254, message = "precisa ser menor que 255 caracter")
         @NotBlank(message = "Nao pode ser null")
         String nacionalidade) {
-    public Autor mappear(){
-        Autor autor = new Autor();
-        autor.setName(nome);
-        autor.setDataNascimento(dataNascimento);
-        autor.setNacionalidade(nacionalidade);
-        return autor;
-    }
 }

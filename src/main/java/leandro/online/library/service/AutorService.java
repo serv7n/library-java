@@ -3,6 +3,8 @@ package leandro.online.library.service;
 import leandro.online.library.dto.AutorRequestDTO;
 import leandro.online.library.dto.AutorResponseDTO;
 import leandro.online.library.exception.OperacaoNaoPermitidaException;
+import leandro.online.library.exception.RegistroDuplicadoException;
+import leandro.online.library.mapper.AutorMapper;
 import leandro.online.library.model.Autor;
 import leandro.online.library.repository.AutorRepository;
 import leandro.online.library.repository.LivroRepository;
@@ -22,9 +24,12 @@ public class AutorService {
     private final AutorRepository autorRepository;
     private final AutorValidator validator;
     private final LivroRepository livroRepository;
+    private final AutorMapper autorMapper;
 
     public void salvar(Autor autor) {
-        validator.validar(autor);
+        if(validator.existeAutorDuplicado(autor)) {
+            throw new RegistroDuplicadoException("Autor Duplicado Tente Outro");
+        }
         this.autorRepository.save(autor);
     }
 
@@ -58,18 +63,16 @@ public class AutorService {
     }
 
     public List<AutorResponseDTO> mapperListDTO(List<Autor> autores){
-        List<AutorResponseDTO> autoresDTO = autores.stream().map(autor -> new AutorResponseDTO(
-                autor.getName(),
-                autor.getDataNascimento(),
-                autor.getNacionalidade())).toList();
-        return autoresDTO;
+        return autores.stream().map(autorMapper::toResponseDTO).toList();
     }
 
     public void atualizar(Autor autor, AutorRequestDTO autorRequestDTO){
-        autor.setName(autorRequestDTO.nome());
+        autor.setNome(autorRequestDTO.nome());
         autor.setDataNascimento(autorRequestDTO.dataNascimento());
         autor.setNacionalidade(autorRequestDTO.nacionalidade());
-        validator.validar(autorRequestDTO.mappear());
+        if(validator.existeAutorDuplicado(autorMapper.toEntity( autorRequestDTO))){
+            throw new RegistroDuplicadoException("Autor Duplicado tente inserir Outro");
+        }
         autorRepository.save(autor);
     }
 
@@ -78,7 +81,7 @@ public class AutorService {
     }
     public List<Autor> findByExemple(String nome, String nacionalidade){
         Autor autor =  new Autor();
-        autor.setName(nome);
+        autor.setNome(nome);
         autor.setNacionalidade(nacionalidade);
         ExampleMatcher exemple = ExampleMatcher.matching().withIgnoreCase().withIgnoreNullValues().withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
         Example<Autor> autorExample = Example.of(autor, exemple);
