@@ -6,9 +6,11 @@ import leandro.online.library.dto.LivroResquestDTO;
 import leandro.online.library.mapper.LivroMapper;
 import leandro.online.library.model.Livro;
 import leandro.online.library.service.LivroService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.awt.print.Pageable;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.time.LocalDate;
@@ -51,8 +53,9 @@ public class LivroController implements GenericController {
             livroService.atualizarLivro(livroDTO, id);
             return  ResponseEntity.status(204).build();
     }
+//    ?isbn = adwdaw
     @GetMapping
-    public ResponseEntity<List<LivroResponseDTO>> pesquisar(
+    public ResponseEntity<Page<LivroResponseDTO>> pesquisar(
             @RequestParam(name = "isbn", required = false)
             String isbn,
             @RequestParam(name = "titulo", required = false)
@@ -61,11 +64,16 @@ public class LivroController implements GenericController {
             Integer ano,
             @RequestParam(name = "genero", required = false)
             String genero,
-            @RequestParam(name = "preco", required = false)
-            BigDecimal preco,
+
             @RequestParam(name = "nome-autor", required = false)
-            String nomeAutor){
-       return ResponseEntity.ok(livroService.pesquisa(isbn, titulo, ano, genero, preco, nomeAutor));
+            String nomeAutor,
+            @RequestParam(name = "pagina",required = false, defaultValue = "0")
+            Integer pagina,
+            @RequestParam(name = "tamanho-pagina", defaultValue = "10",required = false)
+            Integer tamanhoPagina
+
+    ){
+       return ResponseEntity.ok(livroService.pesquisa(isbn, titulo, ano, genero, nomeAutor,pagina,tamanhoPagina));
     }
 
 }

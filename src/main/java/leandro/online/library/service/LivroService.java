@@ -12,8 +12,7 @@ import leandro.online.library.repository.AutorRepository;
 import leandro.online.library.repository.LivroRepository;
 import leandro.online.library.validator.LivroValidator;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -77,22 +76,24 @@ public class LivroService {
         validator.existeIsbnDuplicado(livro);
     }
 
-    public  List<LivroResponseDTO> pesquisa(
+    public Page<LivroResponseDTO> pesquisa(
 
             String isbn,
             String titulo,
             Integer ano,
             String genero,
-            BigDecimal preco,
-            String nomeAutor) {
+            String nomeAutor,
+            Integer pagina,
+            Integer tamanhoPagina) {
         Specification<Livro> specs = ((root, query, cb) -> cb.conjunction());
         if(isbn != null) specs = specs.and(isbnEqual(isbn));
         if(titulo != null) specs = specs.and(tituloLike(titulo));
         if(genero != null) specs = specs.and(generoEqual(genero));
         if(ano != null) specs = specs.and(anoPublicacaoEqual(ano));
         if(nomeAutor != null) specs = specs.and(nomeAutorLike(nomeAutor));
-        List<Livro> livros = livroRepository.findAll(specs);
-        return livros.stream().map(livroMapper::toDTO).toList();
+        Pageable pagerequest = PageRequest.of(pagina,tamanhoPagina);
+        Page<Livro> livros = livroRepository.findAll(specs,pagerequest);
+        return livros.map(livroMapper::toDTO);
     }
 
 }
