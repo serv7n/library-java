@@ -36,7 +36,7 @@ public class AutorValidator {
              throw new RegistroDuplicadoException("Autor Duplicado Tente Outro");
          }
     }
-    public boolean existLivro(Autor autor) {
+    public void existLivro(Autor autor) {
           if (livroRepository.existsLivroByAutor(autor)){
               throw  new OperacaoNaoPermitidaException("Erro na exclusão: registro está sendo utilizado.");
           }
