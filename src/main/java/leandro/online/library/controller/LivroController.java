@@ -73,7 +73,8 @@ public class LivroController implements GenericController {
             Integer tamanhoPagina
 
     ){
-       return ResponseEntity.ok(livroService.pesquisa(isbn, titulo, ano, genero, nomeAutor,pagina,tamanhoPagina));
+       return ResponseEntity.ok
+               (livroService.pesquisa(isbn, titulo, ano, genero, nomeAutor,pagina,tamanhoPagina));
     }
 
 }
