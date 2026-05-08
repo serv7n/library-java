@@ -2,6 +2,7 @@ package leandro.online.library.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -12,7 +13,13 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
-        return http.csrf(AbstractHttpConfigurer::disable)
+        return http.
+                csrf(AbstractHttpConfigurer::disable).
+                formLogin(Customizer.withDefaults()).
+                httpBasic(Customizer.withDefaults()).
+                authorizeHttpRequests(autorize ->{
+                    autorize.anyRequest().authenticated();
+                })
         .build();
 
     }
