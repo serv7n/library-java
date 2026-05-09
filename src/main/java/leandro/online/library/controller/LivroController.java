@@ -8,6 +8,7 @@ import leandro.online.library.model.Livro;
 import leandro.online.library.service.LivroService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.awt.print.Pageable;
@@ -29,24 +30,32 @@ public class LivroController implements GenericController {
         this.livroService = livroService;
         this.livroMapper = livroMapper;
     }
+
+
     @PostMapping
+    @PreAuthorize("hasAnyRole('GERENTE','OPERATOR')")
     public ResponseEntity<Void> salva(@RequestBody @Valid LivroResquestDTO livroDTO){
+
+
         Livro livro  = livroService.salva(livroDTO);
         URI url = createHeaderLocation(livro.getId());
         return   ResponseEntity.created(url).build();
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('GERENTE','OPERATOR')")
     public ResponseEntity<LivroResponseDTO> mostrar(@PathVariable UUID id) {
         return ResponseEntity.ok(livroMapper.toDTO(livroService.obterPorId(id)));
     }
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('GERENTE','OPERATOR')")
     public ResponseEntity<Void> excluir(@PathVariable UUID id) {
         livroService.excluir(id);
         return ResponseEntity.status(204).build();
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('GERENTE','OPERATOR')")
     public ResponseEntity<Void> atualizar(
             @RequestBody @Valid LivroResquestDTO livroDTO,
             @PathVariable UUID id){
@@ -55,6 +64,7 @@ public class LivroController implements GenericController {
     }
 //    ?isbn = adwdaw
     @GetMapping
+    @PreAuthorize("hasAnyRole('GERENTE','OPERATOR')")
     public ResponseEntity<Page<LivroResponseDTO>> pesquisar(
             @RequestParam(name = "isbn", required = false)
             String isbn,

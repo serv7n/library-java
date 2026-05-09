@@ -8,8 +8,10 @@ import leandro.online.library.mapper.AutorMapper;
 import leandro.online.library.mapper.LivroMapper;
 import leandro.online.library.model.Autor;
 import leandro.online.library.model.Livro;
+import leandro.online.library.model.Usuario;
 import leandro.online.library.repository.AutorRepository;
 import leandro.online.library.repository.LivroRepository;
+import leandro.online.library.security.SecurityService;
 import leandro.online.library.validator.LivroValidator;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.*;
@@ -34,12 +36,17 @@ public class LivroService {
     private final LivroValidator validator;
     private final LivroMapper livroMapper;
     private  final AutorMapper autorMapper;
+    private final SecurityService securityService;
     @Transactional
     public Livro salva(LivroResquestDTO livrodto) {
+
         validator.validarGenero(livrodto);
         validator.validarPrecoObrigatorioAPartirDe2020(livrodto.dataPublicacao(),livrodto.preco());
         Livro livro =  livroMapper.toLivro(livrodto);
         validator.existeIsbnDuplicado(livro);
+
+        Usuario user = securityService.obterUsuarioLogado();
+        livro.setUsuario(user);
         livroRepository.save(livro);
         return  livro;
     }

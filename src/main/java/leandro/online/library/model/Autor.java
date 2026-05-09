@@ -40,9 +40,11 @@ public class Autor {
     @LastModifiedDate
     @Column(name = "data_atualizacao")
     private LocalDate dataAtualizacao;
-    //
-    @Column(name = "id_user", nullable = true)
-    private UUID idUser;
+
+
+    @ManyToOne
+    @JoinColumn(name = "id_user", nullable = true)
+    private Usuario usuario;
 
     @OneToMany(mappedBy ="autor", fetch = FetchType.LAZY)
     private List<Livro> livros;

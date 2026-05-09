@@ -5,8 +5,10 @@ import leandro.online.library.dto.AutorResponseDTO;
 import leandro.online.library.exception.EntidadeNaoEncontradaException;
 import leandro.online.library.mapper.AutorMapper;
 import leandro.online.library.model.Autor;
+import leandro.online.library.model.Usuario;
 import leandro.online.library.repository.AutorRepository;
 import leandro.online.library.repository.LivroRepository;
+import leandro.online.library.security.SecurityService;
 import leandro.online.library.validator.AutorValidator;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
@@ -27,6 +29,8 @@ public class AutorService {
     private final LivroRepository livroRepository;
     private final AutorMapper autorMapper;
 
+    private SecurityService securityService;
+
     public AutorService(AutorRepository autorRepository, AutorValidator validator, LivroRepository livroRepository, AutorMapper autorMapper) {
         this.autorRepository = autorRepository;
         this.validator = validator;
@@ -37,6 +41,9 @@ public class AutorService {
     public Autor salvar(AutorRequestDTO autorDTO) {
         Autor autor = autorMapper.toEntity(autorDTO);
         validator.existeAutorDuplicado(autor);
+        Usuario user = securityService.obterUsuarioLogado();
+
+        autor.setUsuario(user);
         autorRepository.save(autor);
         return autor;
     }
