@@ -1,0 +1,64 @@
+package leandro.online.library.config;
+
+import leandro.online.library.security.CustomUserDetailsService;
+import leandro.online.library.service.UsuarioService;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.web.SecurityFilterChain;
+
+@Configuration
+@EnableWebSecurity
+@EnableMethodSecurity(securedEnabled = true,jsr250Enabled = true)
+public class SecurityConfiguration {
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
+        return http.
+                csrf(AbstractHttpConfigurer::disable).
+                formLogin(configurer ->{
+                    configurer.loginPage("/login").permitAll();
+                }).
+                httpBasic(Customizer.withDefaults()).
+                authorizeHttpRequests(autorize ->{
+                    autorize.requestMatchers("/login").permitAll();
+                    autorize.requestMatchers(HttpMethod.POST,"/usuarios/**").permitAll();
+
+                    autorize.anyRequest().authenticated();
+
+                })
+        .build();
+
+    }
+    @Bean
+    public PasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder(10);
+    }
+
+    @Bean
+    public UserDetailsService userDetailsService(UsuarioService usuarioService){
+//        UserDetails user = User.builder().
+//                username("leandro").
+//                password(encoder.encode( "12345678")).
+//                roles("USER").
+//                build();
+//        UserDetails user2 = User.builder().
+//                username("gustavo").
+//                password(encoder.encode( "12345678")).
+//                roles("ADMIN").
+//                build();
+//        return new InMemoryUserDetailsManager(user,user2);
+
+        return  new CustomUserDetailsService(usuarioService);
+    }
+}

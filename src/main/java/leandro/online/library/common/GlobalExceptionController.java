@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 @RestControllerAdvice
@@ -29,35 +30,50 @@ public class GlobalExceptionController {
     @ExceptionHandler(GeneroInvalidoException.class)
     @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
     public ErroMensageDTO handlerGeneroInvalidoException(GeneroInvalidoException e){
-        String meesege = e.getMessage();
-        return new ErroMensageDTO(HttpStatus.NOT_ACCEPTABLE.value(), meesege,List.of());
+        String mensage = e.getMessage();
+        return new ErroMensageDTO(HttpStatus.NOT_ACCEPTABLE.value(), mensage,List.of());
     }
 
     @ExceptionHandler(IsbnDuplicadoException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErroMensageDTO handlerIsbnDuplicadoException(IsbnDuplicadoException e){
-        String meesege = e.getMessage();
-        return new ErroMensageDTO(HttpStatus.CONFLICT.value(), meesege,List.of());
+        String mensage = e.getMessage();
+        return new ErroMensageDTO(HttpStatus.CONFLICT.value(), mensage,List.of());
     }
     @ExceptionHandler(RegistroDuplicadoException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErroMensageDTO handlerRegistroDuplicadoException(RegistroDuplicadoException e){
-        String meesege = e.getMessage();
-        return new ErroMensageDTO(HttpStatus.CONFLICT.value(), meesege,List.of());
+        String mensage = e.getMessage();
+        return new ErroMensageDTO(HttpStatus.CONFLICT.value(), mensage,List.of());
     }
     @ExceptionHandler(OperacaoNaoPermitidaException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErroMensageDTO handlerOperacaoNaoPermitidaException(OperacaoNaoPermitidaException e){
-        String meesege = e.getMessage();
-        return new ErroMensageDTO(HttpStatus.CONFLICT.value(), meesege,List.of());
+        String mensage = e.getMessage();
+        return new ErroMensageDTO(HttpStatus.CONFLICT.value(), mensage,List.of());
     }
 
     @ExceptionHandler(EntidadeNaoEncontradaException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErroMensageDTO handlerEntidadeNaoEncontrada(EntidadeNaoEncontradaException e){
-        String meesege = e.getMessage();
-        return new ErroMensageDTO(HttpStatus.NOT_FOUND.value(), meesege,List.of());
+        String message = e.getMessage();
+        return new ErroMensageDTO(HttpStatus.NOT_FOUND.value(), message,List.of());
     }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErroMensageDTO handlerAcessoNegado(AccessDeniedException e){
+        String mensage = e.getMessage();
+        return new ErroMensageDTO(HttpStatus.NOT_FOUND.value(), "Voce nao tem autorizacao: "+mensage,List.of());
+    }
+    @ExceptionHandler(RuntimeException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErroMensageDTO handlerErroInesperado(RuntimeException e){
+        String mensage = e.getMessage();
+        return new ErroMensageDTO(HttpStatus.NOT_FOUND.value(), "Erro inesperado: "+mensage,List.of());
+    }
+
+
 
 
 }

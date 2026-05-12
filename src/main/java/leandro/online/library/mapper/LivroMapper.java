@@ -9,10 +9,16 @@ import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Mapper(componentModel = "spring", uses = AutorMapper.class)
+
 public abstract  class LivroMapper {
     @Autowired
     AutorRepository autorRepository;
-    public  abstract Livro toLivro(LivroResquestDTO livroDTO);
 
+    @Mapping(
+            target = "autor",
+            expression = "java( livroDTO.id_autor() == null ? null : autorRepository.findById(livroDTO.id_autor()).orElse(null) )"
+    )
+
+    public  abstract Livro toLivro(LivroResquestDTO livroDTO);
     public  abstract LivroResponseDTO toDTO(Livro livro);
 }

@@ -1,0 +1,25 @@
+package leandro.online.library.service;
+
+import leandro.online.library.model.Usuario;
+import leandro.online.library.repository.UsuarioRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+
+@Service
+@RequiredArgsConstructor
+public class UsuarioService {
+
+    private final PasswordEncoder encoder;
+    private final UsuarioRepository repository;
+
+    public void salvar(Usuario usuario){
+        String senha = usuario.getSenha();
+        usuario.setSenha(encoder.encode(senha));
+        repository.save(usuario);
+    }
+    public Usuario obterPorLogin(String login){
+        return repository.findByLogin(login);
+    }
+}

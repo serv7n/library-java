@@ -8,12 +8,14 @@ import leandro.online.library.mapper.AutorMapper;
 import leandro.online.library.mapper.LivroMapper;
 import leandro.online.library.model.Autor;
 import leandro.online.library.model.Livro;
+import leandro.online.library.model.Usuario;
 import leandro.online.library.repository.AutorRepository;
 import leandro.online.library.repository.LivroRepository;
+import leandro.online.library.security.SecurityService;
 import leandro.online.library.validator.LivroValidator;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.*;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +23,9 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
+import static  leandro.online.library.repository.specs.LivroSpecs.*;
+
+
 
 @Service
 @AllArgsConstructor
@@ -31,11 +36,17 @@ public class LivroService {
     private final LivroValidator validator;
     private final LivroMapper livroMapper;
     private  final AutorMapper autorMapper;
+    private final SecurityService securityService;
     @Transactional
     public Livro salva(LivroResquestDTO livrodto) {
+
         validator.validarGenero(livrodto);
+        validator.validarPrecoObrigatorioAPartirDe2020(livrodto.dataPublicacao(),livrodto.preco());
         Livro livro =  livroMapper.toLivro(livrodto);
         validator.existeIsbnDuplicado(livro);
+
+        Usuario user = securityService.obterUsuarioLogado();
+        livro.setUsuario(user);
         livroRepository.save(livro);
         return  livro;
     }
@@ -67,36 +78,29 @@ public class LivroService {
     public void atualizarLivro(LivroResquestDTO dto, UUID id) {
         Livro livro  = obterPorId(id);
         validator.validarGenero(dto);
+        validator.validarPrecoObrigatorioAPartirDe2020(dto.dataPublicacao(),dto.preco());
         atualizarEntidade(dto,livro);
         validator.existeIsbnDuplicado(livro);
     }
 
-    public List<LivroResponseDTO> pesquisa(
+    public Page<LivroResponseDTO> pesquisa(
+
             String isbn,
             String titulo,
-            LocalDate dataPublicacao,
-            generoLivro genero,
-            BigDecimal preco,
-            String nomeAutor) {
-
-        Livro livro = new Livro(isbn, titulo, dataPublicacao, genero, preco);
-        Autor autor = null;
-        if (nomeAutor != null) {
-            autor = new Autor();
-            autor.setNome(nomeAutor);
-            livro.setAutor(autor);
-        }
-        ExampleMatcher example = ExampleMatcher
-                .matching()
-                .withIgnoreCase()
-                .withIgnoreNullValues()
-                .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
-
-        Example<Livro> livroExample = Example.of(livro, example);
-
-        List<Livro> livros = livroRepository.findAll(livroExample);
-
-        return livros.stream().map(livroMapper::toDTO).toList();
+            Integer ano,
+            String genero,
+            String nomeAutor,
+            Integer pagina,
+            Integer tamanhoPagina) {
+        Specification<Livro> specs = ((root, query, cb) -> cb.conjunction());
+        if(isbn != null) specs = specs.and(isbnEqual(isbn));
+        if(titulo != null) specs = specs.and(tituloLike(titulo));
+        if(genero != null) specs = specs.and(generoEqual(genero));
+        if(ano != null) specs = specs.and(anoPublicacaoEqual(ano));
+        if(nomeAutor != null) specs = specs.and(nomeAutorLike(nomeAutor));
+        Pageable pagerequest = PageRequest.of(pagina,tamanhoPagina);
+        Page<Livro> livros = livroRepository.findAll(specs,pagerequest);
+        return livros.map(livroMapper::toDTO);
     }
 
 }

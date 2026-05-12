@@ -4,11 +4,14 @@ import leandro.online.library.Enum.generoLivro;
 import leandro.online.library.dto.LivroResquestDTO;
 import leandro.online.library.exception.GeneroInvalidoException;
 import leandro.online.library.exception.IsbnDuplicadoException;
+import leandro.online.library.exception.OperacaoNaoPermitidaException;
 import leandro.online.library.model.Livro;
 import leandro.online.library.repository.LivroRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Optional;
 
 @Component
@@ -31,6 +34,13 @@ public class LivroValidator {
 
         if(!livro.getId().equals(livroOp.get().getId())) throw new IsbnDuplicadoException("Isbn Duplicado");
 
+    }
+
+
+    public void validarPrecoObrigatorioAPartirDe2020(LocalDate data, BigDecimal preco){
+        if(data.getYear() >=2020 && preco == null){
+            throw new OperacaoNaoPermitidaException("apartir de 2020 o preco e obrigatorio");
+        }
     }
 
 }
