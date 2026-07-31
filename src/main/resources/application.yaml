@@ -1,4 +1,12 @@
 spring:
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
   application:
     name: library
   datasource:
@@ -10,8 +18,11 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
-    properties:
+
+properties:
       hibernate:
         show_sql: true
+
+kind: Application
 
 #      update, none , create-drop

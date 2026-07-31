@@ -14,8 +14,11 @@ import org.springframework.stereotype.Component;
 public class SecurityService {
     private final UsuarioService usuarioService;
     public Usuario obterUsuarioLogado(){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        return usuarioService.obterPorLogin(userDetails.getUsername());
+       Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+       if (authentication instanceof CustomAuthentication customAuth){
+           return  customAuth.getUsuario();
+       }
+       return  null;
     }
 }
