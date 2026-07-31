@@ -1,6 +1,7 @@
 package leandro.online.library.config;
 
 import leandro.online.library.security.CustomUserDetailsService;
+import leandro.online.library.security.LoginSocialSuccessHandler;
 import leandro.online.library.service.UsuarioService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,6 +11,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -23,7 +25,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableMethodSecurity(securedEnabled = true,jsr250Enabled = true)
 public class SecurityConfiguration {
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, LoginSocialSuccessHandler successHandler) throws Exception{
         return http.
                 csrf(AbstractHttpConfigurer::disable).
                 formLogin(configurer ->{
@@ -37,28 +39,22 @@ public class SecurityConfiguration {
                     autorize.anyRequest().authenticated();
 
                 })
+                .oauth2Login(oauth2 ->{
+                    oauth2.loginPage("/login").permitAll();
+                    oauth2.successHandler(successHandler);
+                })
         .build();
 
     }
-    @Bean
-    public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder(10);
+
+//    @Bean
+    public UserDetailsService userDetailsService(UsuarioService usuarioService){
+
+        return  new CustomUserDetailsService(usuarioService);
     }
 
     @Bean
-    public UserDetailsService userDetailsService(UsuarioService usuarioService){
-//        UserDetails user = User.builder().
-//                username("leandro").
-//                password(encoder.encode( "12345678")).
-//                roles("USER").
-//                build();
-//        UserDetails user2 = User.builder().
-//                username("gustavo").
-//                password(encoder.encode( "12345678")).
-//                roles("ADMIN").
-//                build();
-//        return new InMemoryUserDetailsManager(user,user2);
-
-        return  new CustomUserDetailsService(usuarioService);
+    public GrantedAuthorityDefaults grantedAuthorityDefaults(){
+        return  new GrantedAuthorityDefaults("");
     }
 }
